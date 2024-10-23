@@ -1,0 +1,38 @@
+syntax= "proto3";
+
+package auth;
+
+option go_package = "furmanov.sso.v1.proto";
+
+service Auth{
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
+}
+
+message RegisterRequest{
+    string email = 1; //Email of the user to register
+    string password = 2; //Password of the user to register 
+}
+
+message RegisterResponse{
+    int64 user_id = 1; //ID of the user that was registered
+}
+
+message LoginRequest{
+    string email = 1; //Email of the user to login
+    string password = 2; //Password of the user to login
+    int32 app_id = 3; //ID of the app that the user is logging in to
+}
+
+message LoginResponse{
+    string token = 1; //Token that the user can use to authenticate
+}
+
+message IsAdminRequest{
+   int64 user_id = 1; //ID of the user to check if they are an admin
+}
+
+message IsAdminResponse{
+    bool is_admin = 1; //Whether the user is an admin or not
+}
