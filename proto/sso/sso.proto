@@ -3,11 +3,27 @@ syntax= "proto3";
 package auth;
 
 option go_package = "furmanov.sso.v1.proto";
+import "google/api/annotations.proto";
 
 service Auth{
-    rpc Register(RegisterRequest) returns (RegisterResponse);
-    rpc Login(LoginRequest) returns (LoginResponse);
-    rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
+    rpc Register(RegisterRequest) returns (RegisterResponse){
+        option (google.api.http) = {
+            post: "/v1/auth/register"
+            body: "*"
+        };
+    }
+    rpc Login(LoginRequest) returns (LoginResponse){
+        option (google.api.http) = {
+            post: "/v1/auth/login"
+            body: "*"
+        };
+    }
+    rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse){
+        option (google.api.http) = {
+            post: "/v1/auth/is_admin"
+            body: "*"
+        };
+    }
 }
 
 message RegisterRequest{
@@ -36,3 +52,5 @@ message IsAdminRequest{
 message IsAdminResponse{
     bool is_admin = 1; //Whether the user is an admin or not
 }
+
+
