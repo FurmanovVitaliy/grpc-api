@@ -24,11 +24,18 @@ service Auth{
             body: "*"
         };
     }
+    rpc OAuth (OAuthRequest) returns (OAuthResponse){
+        option (google.api.http) = {
+            post: "/v1/auth/oauth"
+            body: "*"
+        };
+    }
 }
 
 message RegisterRequest{
-    string email = 1; //Email of the user to register
-    string password = 2; //Password of the user to register 
+    string username = 1; //Username of the user to register
+    string email = 2; //Email of the user to register
+    string password = 3; //Password of the user to register 
 }
 
 message RegisterResponse{
@@ -42,7 +49,12 @@ message LoginRequest{
 }
 
 message LoginResponse{
-    string token = 1; //Token that the user can use to authenticate
+    string token = 1; //Token that can be used to authenticate the user
+    int64 user_id = 2; //ID of the user that was logged in
+    string username = 3; //Username of the user that was logged in
+    string email = 4; //Email of the user that was logged in
+    string avatar = 6; //Avatar of the user that was logged in
+    bool is_admin = 7; //Whether the user that was logged in is an admin or not
 }
 
 message IsAdminRequest{
@@ -53,4 +65,18 @@ message IsAdminResponse{
     bool is_admin = 1; //Whether the user is an admin or not
 }
 
+message LogInWithGithubRequest{
+    string code = 1; //Code returned by the Github OAuth flow
+}
 
+message OAuthResponse{
+    string token = 1; //Token that can be used to authenticate the user
+    int64 user_id = 2; //ID of the user that was logged in
+    string username = 3; //Username of the user that was logged in
+    string email = 4; //Email of the user that was logged in
+}
+
+message OAuthRequest{
+    string provider = 1; //Provider of the OAuth flow
+    string acces_token = 2; //Code returned by the OAuth flow
+}
