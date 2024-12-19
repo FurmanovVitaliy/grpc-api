@@ -8,25 +8,25 @@ import "google/api/annotations.proto";
 service Auth{
     rpc Register(RegisterRequest) returns (RegisterResponse){
         option (google.api.http) = {
-            post: "/v1/auth/register"
+            post: "/auth/register"
             body: "*"
         };
     }
     rpc Login(LoginRequest) returns (LoginResponse){
         option (google.api.http) = {
-            post: "/v1/auth/login"
+            post: "/auth/login"
             body: "*"
         };
     }
     rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse){
         option (google.api.http) = {
-            post: "/v1/auth/is_admin"
+            post: "/auth/is_admin"
             body: "*"
         };
     }
     rpc OAuth (OAuthRequest) returns (OAuthResponse){
         option (google.api.http) = {
-            post: "/v1/auth/oauth"
+            post: "/auth/oauth"
             body: "*"
         };
     }
@@ -53,8 +53,6 @@ message LoginResponse{
     int64 user_id = 2; //ID of the user that was logged in
     string username = 3; //Username of the user that was logged in
     string email = 4; //Email of the user that was logged in
-    string avatar = 6; //Avatar of the user that was logged in
-    bool is_admin = 7; //Whether the user that was logged in is an admin or not
 }
 
 message IsAdminRequest{
@@ -63,10 +61,6 @@ message IsAdminRequest{
 
 message IsAdminResponse{
     bool is_admin = 1; //Whether the user is an admin or not
-}
-
-message LogInWithGithubRequest{
-    string code = 1; //Code returned by the Github OAuth flow
 }
 
 message OAuthResponse{
@@ -78,5 +72,6 @@ message OAuthResponse{
 
 message OAuthRequest{
     string provider = 1; //Provider of the OAuth flow
-    string acces_token = 2; //Code returned by the OAuth flow
+    string access_token = 2; //Access token returned by the OAuth flow
+    int32 app_id = 3; //ID of the app that the user is logging in to
 }
