@@ -123,7 +123,7 @@ message IsAdminResponse {
 }
 
 message OAuthResponse {
-    string token = 1;       // Token that can be used to authenticate the user
+    string access_token = 1;  // Token that can be used to authenticate the user
     string refresh_token = 2; // Token that can be used to refresh the access token
 }
 
