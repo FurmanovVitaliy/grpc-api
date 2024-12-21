@@ -1,77 +1,180 @@
-syntax= "proto3";
+syntax = "proto3";
 
 package auth;
 
 option go_package = "furmanov.sso.v1.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto"; // Import the Empty message
 
-service Auth{
-    rpc Register(RegisterRequest) returns (RegisterResponse){
+service Auth {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {
         option (google.api.http) = {
             post: "/auth/register"
             body: "*"
         };
     }
-    rpc Login(LoginRequest) returns (LoginResponse){
+    rpc Login(LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
             post: "/auth/login"
             body: "*"
         };
     }
-    rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse){
+    rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            post: "/auth/is_admin"
+            post: "/auth/logout"
             body: "*"
         };
     }
-    rpc OAuth (OAuthRequest) returns (OAuthResponse){
+
+    rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+        option (google.api.http) = {
+            post: "/auth/refresh-token"
+            body: "*"
+        };
+    }
+
+    rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse) {
+        option (google.api.http) = {
+            post: "/auth/is-admin"
+            body: "*"
+        };
+    }
+    rpc OAuth (OAuthRequest) returns (OAuthResponse) {
         option (google.api.http) = {
             post: "/auth/oauth"
             body: "*"
         };
     }
+
+    // Admin functions
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+        option (google.api.http) = {
+            post: "/auth/admin/create-user"
+            body: "*"
+        };
+    }
+
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+        option (google.api.http) = {
+            post: "/auth/admin/delete-user"
+            body: "*"
+        };
+    }
+
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
+        option (google.api.http) = {
+            get: "/auth/admin/get-user-info"
+        };
+    }
+
+    // User functions
+    rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse) {
+        option (google.api.http) = {
+            put: "/auth/update-user-info"
+            body: "*"
+        };
+    }
 }
 
-message RegisterRequest{
-    string username = 1; //Username of the user to register
-    string email = 2; //Email of the user to register
-    string password = 3; //Password of the user to register 
+message RegisterRequest {
+    string username = 1; // Username of the user to register
+    string email = 2;    // Email of the user to register
+    string password = 3; // Password of the user to register
 }
 
-message RegisterResponse{
-    int64 user_id = 1; //ID of the user that was registered
+message RegisterResponse {
+    int64 user_id = 1; // ID of the user that was registered
 }
 
-message LoginRequest{
-    string email = 1; //Email of the user to login
-    string password = 2; //Password of the user to login
-    int32 app_id = 3; //ID of the app that the user is logging in to
+message LoginRequest {
+    string email = 1;  // Email of the user to login
+    string password = 2; // Password of the user to login
+    int32 app_id = 3;  // ID of the app that the user is logging in to
 }
 
-message LoginResponse{
-    string token = 1; //Token that can be used to authenticate the user
-    int64 user_id = 2; //ID of the user that was logged in
-    string username = 3; //Username of the user that was logged in
-    string email = 4; //Email of the user that was logged in
+message LoginResponse {
+    string access_token = 1;  // Token that can be used to authenticate the user
+    string refresh_token = 2; // Token that can be used to refresh the access token
 }
 
-message IsAdminRequest{
-   int64 user_id = 1; //ID of the user to check if they are an admin
+message LogoutRequest {
+    string access_token = 1; // Token that can be used to authenticate the user
 }
 
-message IsAdminResponse{
-    bool is_admin = 1; //Whether the user is an admin or not
+message LogoutResponse {
+    bool success = 1; // Whether the user was successfully logged out
 }
 
-message OAuthResponse{
-    string token = 1; //Token that can be used to authenticate the user
-    int64 user_id = 2; //ID of the user that was logged in
-    string username = 3; //Username of the user that was logged in
-    string email = 4; //Email of the user that was logged in
+message RefreshTokenRequest {
+    string refresh_token = 1; // Token that can be used to refresh the access token
 }
 
-message OAuthRequest{
-    string provider = 1; //Provider of the OAuth flow
-    string access_token = 2; //Access token returned by the OAuth flow
-    int32 app_id = 3; //ID of the app that the user is logging in to
+message RefreshTokenResponse {
+    string access_token = 1;  // Token that can be used to authenticate the user
+    string refresh_token = 2; // Token that can be used to refresh the access token
+}
+
+message IsAdminRequest {
+   int64 user_id = 1; // ID of the user to check if they are an admin
+}
+
+message IsAdminResponse {
+    bool is_admin = 1; // Whether the user is an admin or not
+}
+
+message OAuthResponse {
+    string token = 1;       // Token that can be used to authenticate the user
+    string refresh_token = 2; // Token that can be used to refresh the access token
+}
+
+message OAuthRequest {
+    string provider = 1; // Provider of the OAuth flow
+    string code = 2;     // Code that was returned by the OAuth provider
+    int32 app_id = 3;    // ID of the app that the user is logging in to
+}
+
+// Admin functions
+
+message CreateUserRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message CreateUserResponse {
+    int64 user_id = 1; // ID of the newly created user
+}
+
+message DeleteUserRequest {
+    int64 user_id = 1; // ID of the user to be deleted
+}
+
+message DeleteUserResponse {
+    bool success = 1;  // Whether the user was successfully deleted
+}
+
+message GetUserInfoRequest {
+    int64 user_id = 1; // ID of the user whose info is to be retrieved
+}
+
+message GetUserInfoResponse {
+    string username = 1;
+    string email = 2;
+    bool is_admin = 3;
+    // Add more user fields as needed
+}
+
+// User functions
+
+message UpdateUserInfoRequest {
+    int64 user_id = 1;   // ID of the user whose info is to be updated
+    string username = 2;  // New username (optional)
+    string email = 3;     // New email (optional)
+    string password = 4;  // New password (optional)
+    bytes avatar = 5;     // New avatar image (optional)
+
+}
+
+message UpdateUserInfoResponse {
+    bool success = 1;     // Whether the user info was successfully updated
 }
