@@ -47,30 +47,30 @@ service Auth {
     }
 
     // Admin functions
-    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    rpc Create(CreateRequest) returns (CreateResponse) {
         option (google.api.http) = {
-            post: "/auth/admin/create-user"
+            post: "/auth/admin/create"
             body: "*"
         };
     }
 
-    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {
         option (google.api.http) = {
-            post: "/auth/admin/delete-user"
+            post: "/auth/admin/delete"
             body: "*"
         };
     }
 
-    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
+    rpc GetInfo(GetInfoRequest) returns (GetInfoResponse) {
         option (google.api.http) = {
-            get: "/auth/admin/get-user-info"
+            get: "/auth/admin/get-info"
         };
     }
 
     // User functions
-    rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoResponse) {
+    rpc Update(UpdateRequest) returns (UpdateResponse) {
         option (google.api.http) = {
-            put: "/auth/update-user-info"
+            put: "/auth/update"
             body: "*"
         };
     }
@@ -135,29 +135,29 @@ message OAuthRequest {
 
 // Admin functions
 
-message CreateUserRequest {
+message CreateRequest {
     string username = 1;
     string email = 2;
     string password = 3;
 }
 
-message CreateUserResponse {
+message CreateResponse {
     int64 user_id = 1; // ID of the newly created user
 }
 
-message DeleteUserRequest {
+message DeleteRequest {
     int64 user_id = 1; // ID of the user to be deleted
 }
 
-message DeleteUserResponse {
+message DeleteResponse {
     bool success = 1;  // Whether the user was successfully deleted
 }
 
-message GetUserInfoRequest {
+message GetInfoRequest {
     int64 user_id = 1; // ID of the user whose info is to be retrieved
 }
 
-message GetUserInfoResponse {
+message GetInfoResponse {
     string username = 1;
     string email = 2;
     bool is_admin = 3;
@@ -166,15 +166,14 @@ message GetUserInfoResponse {
 
 // User functions
 
-message UpdateUserInfoRequest {
+message UpdateRequest {
     int64 user_id = 1;   // ID of the user whose info is to be updated
     string username = 2;  // New username (optional)
     string email = 3;     // New email (optional)
     string password = 4;  // New password (optional)
     bytes avatar = 5;     // New avatar image (optional)
-
 }
 
-message UpdateUserInfoResponse {
+message UpdateResponse {
     bool success = 1;     // Whether the user info was successfully updated
 }
