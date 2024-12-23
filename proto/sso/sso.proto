@@ -4,7 +4,6 @@ package auth;
 
 option go_package = "furmanov.sso.v1.proto";
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto"; // Import the Empty message
 
 service Auth {
     rpc Register(RegisterRequest) returns (RegisterResponse) {
@@ -19,7 +18,7 @@ service Auth {
             body: "*"
         };
     }
-    rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    rpc Logout (LogoutRequest) returns (LogoutResponse) {
         option (google.api.http) = {
             post: "/auth/logout"
             body: "*"
