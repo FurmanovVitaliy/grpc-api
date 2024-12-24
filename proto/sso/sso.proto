@@ -135,9 +135,10 @@ message OAuthRequest {
 // Admin functions
 
 message CreateRequest {
-    string username = 1;
-    string email = 2;
-    string password = 3;
+    string access_token = 1; // Token that can be used to authenticate the user
+    string username = 2;
+    string email = 3;
+    string password = 4;
 }
 
 message CreateResponse {
@@ -153,7 +154,8 @@ message DeleteResponse {
 }
 
 message GetInfoRequest {
-    int64 user_id = 1; // ID of the user whose info is to be retrieved
+    string access_token = 1; // Token that can be used to authenticate the user
+    int64 user_id = 2; // ID of the user whose info is to be retrieved
 }
 
 message GetInfoResponse {
@@ -166,7 +168,7 @@ message GetInfoResponse {
 // User functions
 
 message UpdateRequest {
-    int64 user_id = 1;   // ID of the user whose info is to be updated
+    string access_token = 1; // Token that can be used to authenticate the user
     string username = 2;  // New username (optional)
     string email = 3;     // New email (optional)
     string password = 4;  // New password (optional)
