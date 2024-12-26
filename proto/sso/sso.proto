@@ -97,7 +97,7 @@ message LoginResponse {
 }
 
 message LogoutRequest {
-    string access_token = 1; // Token that can be used to authenticate the user
+    string refresh_token = 1; // Token that can be used to refresh the access token
 }
 
 message LogoutResponse {
@@ -110,20 +110,15 @@ message RefreshTokenRequest {
 
 message RefreshTokenResponse {
     string access_token = 1;  // Token that can be used to authenticate the user
-    string refresh_token = 2; // Token that can be used to refresh the access token
 }
 
 message IsAdminRequest {
-   int64 user_id = 1; // ID of the user to check if they are an admin
+    int32 app_id = 1;       // ID of the app that the user is checking admin status for
+    int64 user_id = 2; // ID of the user to check if they are an admin
 }
 
 message IsAdminResponse {
     bool is_admin = 1; // Whether the user is an admin or not
-}
-
-message OAuthResponse {
-    string access_token = 1;  // Token that can be used to authenticate the user
-    string refresh_token = 2; // Token that can be used to refresh the access token
 }
 
 message OAuthRequest {
@@ -132,6 +127,10 @@ message OAuthRequest {
     int32 app_id = 3;    // ID of the app that the user is logging in to
 }
 
+message OAuthResponse {
+    string access_token = 1;  // Token that can be used to authenticate the user
+    string refresh_token = 2; // Token that can be used to refresh the access token
+}
 // Admin functions
 
 message CreateRequest {
@@ -146,7 +145,8 @@ message CreateResponse {
 }
 
 message DeleteRequest {
-    int64 user_id = 1; // ID of the user to be deleted
+    string access_token = 1; // Token that can be used to authenticate the user
+    int64 user_id = 2; // ID of the user to be deleted
 }
 
 message DeleteResponse {
