@@ -173,7 +173,7 @@ message GetInfoResponse {
 
 message UpdateRequest {
     string access_token = 1; // Token that can be used to authenticate the user
-    int32 user_id = 2; // ID of the user to be updated
+    int32 app_id = 2; // ID of the user to be updated
     string username = 3;  // New username (optional)
     string email = 4;     // New email (optional)
     string password = 5;  // New password (optional)
