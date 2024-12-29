@@ -135,9 +135,10 @@ message OAuthResponse {
 
 message CreateRequest {
     string access_token = 1; // Token that can be used to authenticate the user
-    string username = 2;
-    string email = 3;
-    string password = 4;
+    int32 app_id = 2;       // ID of the app that the user is creating a user for
+    string username = 3;
+    string email = 4;
+    string password = 5;
 }
 
 message CreateResponse {
@@ -146,7 +147,8 @@ message CreateResponse {
 
 message DeleteRequest {
     string access_token = 1; // Token that can be used to authenticate the user
-    int64 user_id = 2; // ID of the user to be deleted
+    int32 app_id = 2;       // ID of the app that the user is deleting a user from
+    int64 user_id = 3; // ID of the user to be deleted
 }
 
 message DeleteResponse {
@@ -155,13 +157,15 @@ message DeleteResponse {
 
 message GetInfoRequest {
     string access_token = 1; // Token that can be used to authenticate the user
-    int64 user_id = 2; // ID of the user whose info is to be retrieved
+    int32 app_id = 2;       // ID of the app that the user is getting info for
+    int64 user_id = 3; // ID of the user whose info is to be retrieved
 }
 
 message GetInfoResponse {
-    string username = 1;
-    string email = 2;
-    bool is_admin = 3;
+    int64 user_id = 1;
+    string username = 2;
+    string email = 3;
+    bool is_admin = 4;
     // Add more user fields as needed
 }
 
@@ -169,10 +173,11 @@ message GetInfoResponse {
 
 message UpdateRequest {
     string access_token = 1; // Token that can be used to authenticate the user
-    string username = 2;  // New username (optional)
-    string email = 3;     // New email (optional)
-    string password = 4;  // New password (optional)
-    bytes avatar = 5;     // New avatar image (optional)
+    int32 user_id = 2; // ID of the user to be updated
+    string username = 3;  // New username (optional)
+    string email = 4;     // New email (optional)
+    string password = 5;  // New password (optional)
+    bytes avatar = 6;     // New avatar image (optional)
 }
 
 message UpdateResponse {
