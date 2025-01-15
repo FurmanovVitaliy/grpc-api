@@ -3,183 +3,241 @@ syntax = "proto3";
 package auth;
 
 option go_package = "furmanov.sso.v1.proto";
+
+import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
+// Определение ролей пользователя
+enum Role {
+    ROLE_USER = 0;
+    ROLE_ADMIN = 1;
+}
+
+// Определение статуса сессии
+enum SessionStatus {
+    SESSION_ACTIVE = 0;
+    SESSION_EXPIRED = 1;
+    SESSION_REVOKED = 2;
+}
+
+// Структура пользователя
+message User {
+    int64 id = 1;              // Уникальный идентификатор пользователя
+    string email = 2;          // Email пользователя
+    string username = 3;       // Имя пользователя
+    string full_name = 4;      // Полное имя
+    string avatar_url = 5;     // URL аватара
+    Role role = 6;             // Роль пользователя
+}
+
+// Структура сессии
+message Session {
+    string session_id = 1;         // Уникальный идентификатор сессии
+    int64 user_id = 2;             // ID пользователя
+    int32 app_id = 3;              // ID приложения
+    string ip_address = 4;         // IP-адрес клиента
+    string user_agent = 5;         // User-Agent клиента
+    SessionStatus status = 6;      // Статус сессии
+    google.protobuf.Timestamp created_at = 7; // Время создания сессии
+    google.protobuf.Timestamp last_activity = 8; // Время последней активности
+    google.protobuf.Timestamp expired_at = 9;    // Время истечения сессии
+}
+
+// Сервис аутентификации
 service Auth {
+
     rpc Register(RegisterRequest) returns (RegisterResponse) {
         option (google.api.http) = {
-            post: "/auth/register"
+            post: "/api/auth/register"
             body: "*"
         };
     }
+
     rpc Login(LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
-            post: "/auth/login"
-            body: "*"
-        };
-    }
-    rpc Logout (LogoutRequest) returns (LogoutResponse) {
-        option (google.api.http) = {
-            post: "/auth/logout"
+            post: "/api/auth/login"
             body: "*"
         };
     }
 
-    rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse) {
+    rpc Logout(LogoutRequest) returns (LogoutResponse) {
         option (google.api.http) = {
-            post: "/auth/refresh-token"
+            post: "/api/auth/logout"
             body: "*"
         };
     }
 
-    rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse) {
+    rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {
         option (google.api.http) = {
-            post: "/auth/is-admin"
-            body: "*"
-        };
-    }
-    rpc OAuth (OAuthRequest) returns (OAuthResponse) {
-        option (google.api.http) = {
-            post: "/auth/oauth"
+            post: "/api/auth/refresh-token"
             body: "*"
         };
     }
 
-    // Admin functions
-    rpc Create(CreateRequest) returns (CreateResponse) {
+    rpc OAuth(OAuthRequest) returns (OAuthResponse) {
         option (google.api.http) = {
-            post: "/auth/admin/create"
+            post: "/api/auth/oauth"
             body: "*"
         };
     }
 
-    rpc Delete(DeleteRequest) returns (DeleteResponse) {
+    rpc OAuthCallback(OAuthCallbackRequest) returns (OAuthCallbackResponse) {
         option (google.api.http) = {
-            post: "/auth/admin/delete"
+            post: "/api/auth/oauth-callback"
             body: "*"
         };
     }
 
-    rpc GetInfo(GetInfoRequest) returns (GetInfoResponse) {
+    rpc ActiveSessions(ActiveSessionsRequest) returns (ActiveSessionsResponse) {
         option (google.api.http) = {
-            get: "/auth/admin/get-info"
+            get: "/api/auth/sessions"
         };
     }
 
-    // User functions
-    rpc Update(UpdateRequest) returns (UpdateResponse) {
+    rpc RevokeSession(RevokeSessionRequest) returns (RevokeSessionResponse) {
         option (google.api.http) = {
-            put: "/auth/update"
+            post: "/api/auth/revoke-session"
             body: "*"
+        };
+    }
+
+    rpc RevokeAllSessions(RevokeAllSessionsRequest) returns (RevokeAllSessionsResponse) {
+        option (google.api.http) = {
+            post: "/api/auth/revoke-all-sessions"
+            body: "*"
+        };
+    }
+
+    rpc BlockUser(BlockUserRequest) returns (BlockUserResponse) {
+        option (google.api.http) = {
+            post: "/api/auth/admin/block-user"
+            body: "*"
+        };
+    }
+
+    rpc GetCurrentUser(GetCurrentUserRequest) returns (GetCurrentUserResponse) {
+        option (google.api.http) = {
+            get: "/api/auth/me"
         };
     }
 }
 
+// Запросы и ответы для регистрации
 message RegisterRequest {
-    string username = 1; // Username of the user to register
-    string email = 2;    // Email of the user to register
-    string password = 3; // Password of the user to register
+    string email = 1;
+    string password = 2;
+    string username = 3;
+    string full_name = 4;
 }
 
 message RegisterResponse {
-    int64 user_id = 1; // ID of the user that was registered
+    bool success = 1;
+    string message = 2;
 }
 
+// Запросы и ответы для входа
 message LoginRequest {
-    string email = 1;  // Email of the user to login
-    string password = 2; // Password of the user to login
-    int32 app_id = 3;  // ID of the app that the user is logging in to
+    string email = 1;
+    string password = 2;
+    int32 app_id = 3;
 }
 
 message LoginResponse {
-    string access_token = 1;  // Token that can be used to authenticate the user
-    string refresh_token = 2; // Token that can be used to refresh the access token
+    string access_token = 1;
+    string session_id = 2;
+    User user_info = 3;
+    int64 expires_in = 4; // Срок действия токена в секундах
+    string message = 5;
 }
 
+// Запросы и ответы для выхода
 message LogoutRequest {
-    string refresh_token = 1; // Token that can be used to refresh the access token
+    string session_id = 1;
 }
 
 message LogoutResponse {
-    bool success = 1; // Whether the user was successfully logged out
+    bool success = 1;
+    string message = 2;
 }
 
+// Запросы и ответы для обновления токена
 message RefreshTokenRequest {
-    string refresh_token = 1; // Token that can be used to refresh the access token
+    string session_id = 1;
 }
 
 message RefreshTokenResponse {
-    string access_token = 1;  // Token that can be used to authenticate the user
+    string access_token = 1;
+    int64 expires_in = 2; // Срок действия нового токена
+    bool success = 3;
+    string message = 4;
 }
 
-message IsAdminRequest {
-    int32 app_id = 1;       // ID of the app that the user is checking admin status for
-    int64 user_id = 2; // ID of the user to check if they are an admin
-}
-
-message IsAdminResponse {
-    bool is_admin = 1; // Whether the user is an admin or not
-}
-
+// Запросы и ответы для OAuth
 message OAuthRequest {
-    string provider = 1; // Provider of the OAuth flow
-    string code = 2;     // Code that was returned by the OAuth provider
-    int32 app_id = 3;    // ID of the app that the user is logging in to
+    string provider = 1;
+    int32 app_id = 2;
 }
 
 message OAuthResponse {
-    string access_token = 1;  // Token that can be used to authenticate the user
-    string refresh_token = 2; // Token that can be used to refresh the access token
-}
-// Admin functions
-
-message CreateRequest {
-    string access_token = 1; // Token that can be used to authenticate the user
-    int32 app_id = 2;       // ID of the app that the user is creating a user for
-    string username = 3;
-    string email = 4;
-    string password = 5;
+    string auth_url = 1;
+    string provider = 2;
 }
 
-message CreateResponse {
-    int64 user_id = 1; // ID of the newly created user
+message OAuthCallbackRequest {
+    string provider = 1;
+    int32 app_id = 2;
+    string code = 3;
+    string state = 4;
 }
 
-message DeleteRequest {
-    string access_token = 1; // Token that can be used to authenticate the user
-    int32 app_id = 2;       // ID of the app that the user is deleting a user from
-    int64 user_id = 3; // ID of the user to be deleted
+message OAuthCallbackResponse {
+    string access_token = 1;
+    string session_id = 2;
+    User user_info = 3;
+    string message = 4;
 }
 
-message DeleteResponse {
-    bool success = 1;  // Whether the user was successfully deleted
+// Запросы и ответы для активных сессий
+message ActiveSessionsRequest {
+    string user_id = 1;
 }
 
-message GetInfoRequest {
-    string access_token = 1; // Token that can be used to authenticate the user
-    int32 app_id = 2;       // ID of the app that the user is getting info for
-    int64 user_id = 3; // ID of the user whose info is to be retrieved
+message ActiveSessionsResponse {
+    repeated Session sessions = 1;
 }
 
-message GetInfoResponse {
-    int64 user_id = 1;
-    string username = 2;
-    string email = 3;
-    bool is_admin = 4;
-    // Add more user fields as needed
+// Запросы и ответы для управления сессиями
+message RevokeSessionRequest {
+    string session_id = 1;
 }
 
-// User functions
-
-message UpdateRequest {
-    string access_token = 1; // Token that can be used to authenticate the user
-    int32 app_id = 2; // ID of the user to be updated
-    string username = 3;  // New username (optional)
-    string email = 4;     // New email (optional)
-    string password = 5;  // New password (optional)
-    bytes avatar = 6;     // New avatar image (optional)
+message RevokeSessionResponse {
+    bool success = 1;
+    string message = 2;
 }
 
-message UpdateResponse {
-    bool success = 1;     // Whether the user info was successfully updated
+message RevokeAllSessionsRequest {
+    string user_id = 1;
+}
+
+message RevokeAllSessionsResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Запросы и ответы для блокировки пользователей
+message BlockUserRequest {
+    string user_id = 1;
+}
+
+message BlockUserResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Запросы и ответы для получения текущего пользователя
+message GetCurrentUserRequest {}
+
+message GetCurrentUserResponse {
+    User user_info = 1;
 }
