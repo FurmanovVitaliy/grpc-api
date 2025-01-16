@@ -7,12 +7,6 @@ option go_package = "furmanov.sso.v1.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
-// Определение ролей пользователя
-enum Role {
-    ROLE_USER = 0;
-    ROLE_ADMIN = 1;
-}
-
 // Определение статуса сессии
 enum SessionStatus {
     SESSION_ACTIVE = 0;
@@ -20,27 +14,15 @@ enum SessionStatus {
     SESSION_REVOKED = 2;
 }
 
-// Структура пользователя
-message User {
-    int64 id = 1;              // Уникальный идентификатор пользователя
-    string email = 2;          // Email пользователя
-    string username = 3;       // Имя пользователя
-    string full_name = 4;      // Полное имя
-    string avatar_url = 5;     // URL аватара
-    Role role = 6;             // Роль пользователя
-}
-
 // Структура сессии
 message Session {
     string session_id = 1;         // Уникальный идентификатор сессии
-    int64 user_id = 2;             // ID пользователя
-    int32 app_id = 3;              // ID приложения
-    string ip_address = 4;         // IP-адрес клиента
-    string user_agent = 5;         // User-Agent клиента
-    SessionStatus status = 6;      // Статус сессии
-    google.protobuf.Timestamp created_at = 7; // Время создания сессии
-    google.protobuf.Timestamp last_activity = 8; // Время последней активности
-    google.protobuf.Timestamp expired_at = 9;    // Время истечения сессии
+    string ip_address = 2;         // IP-адрес клиента
+    string user_agent = 3;         // User-Agent клиента
+    SessionStatus status = 4;      // Статус сессии
+    google.protobuf.Timestamp created_at = 5; // Время создания сессии
+    google.protobuf.Timestamp last_activity = 6; // Время последней активности
+    google.protobuf.Timestamp expired_at = 7;    // Время истечения сессии
 }
 
 // Сервис аутентификации
@@ -114,12 +96,6 @@ service Auth {
             body: "*"
         };
     }
-
-    rpc GetCurrentUser(GetCurrentUserRequest) returns (GetCurrentUserResponse) {
-        option (google.api.http) = {
-            get: "/api/auth/me"
-        };
-    }
 }
 
 // Запросы и ответы для регистрации
@@ -127,7 +103,7 @@ message RegisterRequest {
     string email = 1;
     string password = 2;
     string username = 3;
-    string full_name = 4;
+
 }
 
 message RegisterResponse {
@@ -144,10 +120,8 @@ message LoginRequest {
 
 message LoginResponse {
     string access_token = 1;
-    string session_id = 2;
-    User user_info = 3;
-    int64 expires_in = 4; // Срок действия токена в секундах
-    string message = 5;
+    string refresh_token =2;
+    string message = 3;
 }
 
 // Запросы и ответы для выхода
@@ -192,14 +166,15 @@ message OAuthCallbackRequest {
 
 message OAuthCallbackResponse {
     string access_token = 1;
-    string session_id = 2;
-    User user_info = 3;
-    string message = 4;
+    string refresh_token =2;
+    string message = 3;
 }
 
 // Запросы и ответы для активных сессий
 message ActiveSessionsRequest {
     string user_id = 1;
+    string access_token = 2;
+    int32 app_id = 3;
 }
 
 message ActiveSessionsResponse {
@@ -209,15 +184,19 @@ message ActiveSessionsResponse {
 // Запросы и ответы для управления сессиями
 message RevokeSessionRequest {
     string session_id = 1;
+    string access_token = 2;
+    int32 app_id = 3;
 }
 
 message RevokeSessionResponse {
     bool success = 1;
     string message = 2;
+    
 }
 
 message RevokeAllSessionsRequest {
     string user_id = 1;
+    string access_token = 2;
 }
 
 message RevokeAllSessionsResponse {
@@ -228,16 +207,19 @@ message RevokeAllSessionsResponse {
 // Запросы и ответы для блокировки пользователей
 message BlockUserRequest {
     string user_id = 1;
+    string access_token = 2;
 }
 
 message BlockUserResponse {
     bool success = 1;
     string message = 2;
+    int32 app_id = 3;
 }
 
 // Запросы и ответы для получения текущего пользователя
-message GetCurrentUserRequest {}
-
-message GetCurrentUserResponse {
-    User user_info = 1;
+message GetCurrentUserRequest {
+    string user_id = 1;
+    string access_token = 2;
+    int32 app_id = 3;
 }
+
