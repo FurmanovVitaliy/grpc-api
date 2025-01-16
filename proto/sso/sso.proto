@@ -136,14 +136,11 @@ message LogoutResponse {
 
 // Запросы и ответы для обновления токена
 message RefreshTokenRequest {
-    string session_id = 1;
+    string refresh_token = 1;
 }
 
 message RefreshTokenResponse {
     string access_token = 1;
-    int64 expires_in = 2; // Срок действия нового токена
-    bool success = 3;
-    string message = 4;
 }
 
 // Запросы и ответы для OAuth
