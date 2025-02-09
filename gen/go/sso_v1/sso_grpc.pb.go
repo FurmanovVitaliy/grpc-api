@@ -27,7 +27,7 @@ type AuthClient interface {
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	OAuth(ctx context.Context, in *OAuthRequest, opts ...grpc.CallOption) (*OAuthResponse, error)
-	OAuthCallback(ctx context.Context, in *OAuthCallbackRequest, opts ...grpc.CallOption) (*OAuthCallbackResponse, error)
+	GithubCallback(ctx context.Context, in *OAuthCallbackRequest, opts ...grpc.CallOption) (*OAuthCallbackResponse, error)
 	ActiveSessions(ctx context.Context, in *ActiveSessionsRequest, opts ...grpc.CallOption) (*ActiveSessionsResponse, error)
 	RevokeSession(ctx context.Context, in *RevokeSessionRequest, opts ...grpc.CallOption) (*RevokeSessionResponse, error)
 	RevokeAllSessions(ctx context.Context, in *RevokeAllSessionsRequest, opts ...grpc.CallOption) (*RevokeAllSessionsResponse, error)
@@ -87,9 +87,9 @@ func (c *authClient) OAuth(ctx context.Context, in *OAuthRequest, opts ...grpc.C
 	return out, nil
 }
 
-func (c *authClient) OAuthCallback(ctx context.Context, in *OAuthCallbackRequest, opts ...grpc.CallOption) (*OAuthCallbackResponse, error) {
+func (c *authClient) GithubCallback(ctx context.Context, in *OAuthCallbackRequest, opts ...grpc.CallOption) (*OAuthCallbackResponse, error) {
 	out := new(OAuthCallbackResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/OAuthCallback", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/auth.Auth/GithubCallback", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ type AuthServer interface {
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	OAuth(context.Context, *OAuthRequest) (*OAuthResponse, error)
-	OAuthCallback(context.Context, *OAuthCallbackRequest) (*OAuthCallbackResponse, error)
+	GithubCallback(context.Context, *OAuthCallbackRequest) (*OAuthCallbackResponse, error)
 	ActiveSessions(context.Context, *ActiveSessionsRequest) (*ActiveSessionsResponse, error)
 	RevokeSession(context.Context, *RevokeSessionRequest) (*RevokeSessionResponse, error)
 	RevokeAllSessions(context.Context, *RevokeAllSessionsRequest) (*RevokeAllSessionsResponse, error)
@@ -168,8 +168,8 @@ func (UnimplementedAuthServer) RefreshToken(context.Context, *RefreshTokenReques
 func (UnimplementedAuthServer) OAuth(context.Context, *OAuthRequest) (*OAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OAuth not implemented")
 }
-func (UnimplementedAuthServer) OAuthCallback(context.Context, *OAuthCallbackRequest) (*OAuthCallbackResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OAuthCallback not implemented")
+func (UnimplementedAuthServer) GithubCallback(context.Context, *OAuthCallbackRequest) (*OAuthCallbackResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GithubCallback not implemented")
 }
 func (UnimplementedAuthServer) ActiveSessions(context.Context, *ActiveSessionsRequest) (*ActiveSessionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActiveSessions not implemented")
@@ -286,20 +286,20 @@ func _Auth_OAuth_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_OAuthCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Auth_GithubCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OAuthCallbackRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).OAuthCallback(ctx, in)
+		return srv.(AuthServer).GithubCallback(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/OAuthCallback",
+		FullMethod: "/auth.Auth/GithubCallback",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).OAuthCallback(ctx, req.(*OAuthCallbackRequest))
+		return srv.(AuthServer).GithubCallback(ctx, req.(*OAuthCallbackRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -404,8 +404,8 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_OAuth_Handler,
 		},
 		{
-			MethodName: "OAuthCallback",
-			Handler:    _Auth_OAuthCallback_Handler,
+			MethodName: "GithubCallback",
+			Handler:    _Auth_GithubCallback_Handler,
 		},
 		{
 			MethodName: "ActiveSessions",

@@ -63,10 +63,9 @@ service Auth {
         };
     }
 
-    rpc OAuthCallback(OAuthCallbackRequest) returns (OAuthCallbackResponse) {
-        option (google.api.http) = {
-            post: "/api/auth/oauth-callback"
-            body: "*"
+    rpc GithubCallback(OAuthCallbackRequest) returns (OAuthCallbackResponse) {
+    option (google.api.http) = {
+        get: "/api/auth/github-callback"
         };
     }
 
@@ -155,10 +154,8 @@ message OAuthResponse {
 }
 
 message OAuthCallbackRequest {
-    string provider = 1;
-    int32 app_id = 2;
-    string code = 3;
-    string state = 4;
+    string code = 1;
+    string state = 2;
 }
 
 message OAuthCallbackResponse {
