@@ -31,10 +31,12 @@ message Session {
     string user_id = 2 [(validate.rules).string = {uuid: true}];  // Добавлено
     string ip_address = 3 [(validate.rules).string = {ip: true}]; 
     string user_agent = 4 [(validate.rules).string = {min_len: 1}];
-    SessionStatus status = 5;
-    google.protobuf.Timestamp created_at = 6;
-    google.protobuf.Timestamp last_activity = 7;
-    google.protobuf.Timestamp expired_at = 8;
+    int32 app_id = 5 [(validate.rules).int32 = {gt: 0}];
+    string app_name = 6 [(validate.rules).string = {min_len: 1}];
+    SessionStatus status = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp last_activity = 9;
+    google.protobuf.Timestamp expired_at = 10;
 }
 
 message User {
@@ -98,6 +100,13 @@ service Auth {
     rpc RevokeSession(RevokeSessionRequest) returns (RevokeSessionResponse) {
         option (google.api.http) = {
             post: "/api/auth/revoke-session"
+            body: "*"
+        };
+    }
+
+    rpc RevokeAppSessions(RevokeAppSessionsRequest) returns (RevokeAppSessionsResponse) {
+        option (google.api.http) = {
+            post: "/api/auth/revoke-app-sessions"
             body: "*"
         };
     }
@@ -209,7 +218,6 @@ message ActiveSessionsResponse {
 message RevokeSessionRequest {
     string session_id = 1 [(validate.rules).string = {min_len: 1}];
     string access_token = 2 [(validate.rules).string = {min_len: 1}];
-    int32 app_id = 3 [(validate.rules).int32 = {gt: 0}];
 }
 
 message RevokeSessionResponse {
@@ -217,9 +225,19 @@ message RevokeSessionResponse {
     string message = 2;
 }
 
-message RevokeAllSessionsRequest {
+message RevokeAppSessionsRequest {
     string access_token = 1 [(validate.rules).string = {min_len: 1}];
     int32 app_id = 2 [(validate.rules).int32 = {gt: 0}];
+
+}
+
+message RevokeAppSessionsResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message RevokeAllSessionsRequest {
+    string access_token = 1 [(validate.rules).string = {min_len: 1}];
 }
 
 message RevokeAllSessionsResponse {
@@ -236,6 +254,5 @@ message BlockUserRequest {
 message BlockUserResponse {
     bool success = 1;
     string message = 2;
-    int32 app_id = 3 [(validate.rules).int32 = {gt: 0}];
 }
 

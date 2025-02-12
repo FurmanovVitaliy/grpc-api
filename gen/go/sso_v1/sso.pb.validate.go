@@ -105,6 +105,28 @@ func (m *Session) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetAppId() <= 0 {
+		err := SessionValidationError{
+			field:  "AppId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetAppName()) < 1 {
+		err := SessionValidationError{
+			field:  "AppName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for Status
 
 	if all {
@@ -2388,17 +2410,6 @@ func (m *RevokeSessionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetAppId() <= 0 {
-		err := RevokeSessionRequestValidationError{
-			field:  "AppId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(errors) > 0 {
 		return RevokeSessionRequestMultiError(errors)
 	}
@@ -2585,6 +2596,236 @@ var _ interface {
 	ErrorName() string
 } = RevokeSessionResponseValidationError{}
 
+// Validate checks the field values on RevokeAppSessionsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RevokeAppSessionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RevokeAppSessionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RevokeAppSessionsRequestMultiError, or nil if none found.
+func (m *RevokeAppSessionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RevokeAppSessionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetAccessToken()) < 1 {
+		err := RevokeAppSessionsRequestValidationError{
+			field:  "AccessToken",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetAppId() <= 0 {
+		err := RevokeAppSessionsRequestValidationError{
+			field:  "AppId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return RevokeAppSessionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RevokeAppSessionsRequestMultiError is an error wrapping multiple validation
+// errors returned by RevokeAppSessionsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RevokeAppSessionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RevokeAppSessionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RevokeAppSessionsRequestMultiError) AllErrors() []error { return m }
+
+// RevokeAppSessionsRequestValidationError is the validation error returned by
+// RevokeAppSessionsRequest.Validate if the designated constraints aren't met.
+type RevokeAppSessionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RevokeAppSessionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RevokeAppSessionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RevokeAppSessionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RevokeAppSessionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RevokeAppSessionsRequestValidationError) ErrorName() string {
+	return "RevokeAppSessionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RevokeAppSessionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRevokeAppSessionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RevokeAppSessionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RevokeAppSessionsRequestValidationError{}
+
+// Validate checks the field values on RevokeAppSessionsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RevokeAppSessionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RevokeAppSessionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RevokeAppSessionsResponseMultiError, or nil if none found.
+func (m *RevokeAppSessionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RevokeAppSessionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return RevokeAppSessionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RevokeAppSessionsResponseMultiError is an error wrapping multiple validation
+// errors returned by RevokeAppSessionsResponse.ValidateAll() if the
+// designated constraints aren't met.
+type RevokeAppSessionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RevokeAppSessionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RevokeAppSessionsResponseMultiError) AllErrors() []error { return m }
+
+// RevokeAppSessionsResponseValidationError is the validation error returned by
+// RevokeAppSessionsResponse.Validate if the designated constraints aren't met.
+type RevokeAppSessionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RevokeAppSessionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RevokeAppSessionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RevokeAppSessionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RevokeAppSessionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RevokeAppSessionsResponseValidationError) ErrorName() string {
+	return "RevokeAppSessionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RevokeAppSessionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRevokeAppSessionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RevokeAppSessionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RevokeAppSessionsResponseValidationError{}
+
 // Validate checks the field values on RevokeAllSessionsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -2611,17 +2852,6 @@ func (m *RevokeAllSessionsRequest) validate(all bool) error {
 		err := RevokeAllSessionsRequestValidationError{
 			field:  "AccessToken",
 			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetAppId() <= 0 {
-		err := RevokeAllSessionsRequestValidationError{
-			field:  "AppId",
-			reason: "value must be greater than 0",
 		}
 		if !all {
 			return err
@@ -2971,17 +3201,6 @@ func (m *BlockUserResponse) validate(all bool) error {
 	// no validation rules for Success
 
 	// no validation rules for Message
-
-	if m.GetAppId() <= 0 {
-		err := BlockUserResponseValidationError{
-			field:  "AppId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
 
 	if len(errors) > 0 {
 		return BlockUserResponseMultiError(errors)
