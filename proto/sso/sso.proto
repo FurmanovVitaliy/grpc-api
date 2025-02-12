@@ -28,15 +28,13 @@ enum Role{
 
 message Session {
     string session_id = 1 [(validate.rules).string = {uuid: true}];
-    string user_id = 2 [(validate.rules).string = {uuid: true}];  // Добавлено
     string ip_address = 3 [(validate.rules).string = {ip: true}]; 
     string user_agent = 4 [(validate.rules).string = {min_len: 1}];
-    int32 app_id = 5 [(validate.rules).int32 = {gt: 0}];
+    string device = 5 [(validate.rules).string = {min_len: 1}];
     string app_name = 6 [(validate.rules).string = {min_len: 1}];
     SessionStatus status = 7;
     google.protobuf.Timestamp created_at = 8;
     google.protobuf.Timestamp last_activity = 9;
-    google.protobuf.Timestamp expired_at = 10;
 }
 
 message User {

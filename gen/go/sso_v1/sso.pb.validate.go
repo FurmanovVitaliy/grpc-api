@@ -71,18 +71,6 @@ func (m *Session) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if err := m._validateUuid(m.GetUserId()); err != nil {
-		err = SessionValidationError{
-			field:  "UserId",
-			reason: "value must be a valid UUID",
-			cause:  err,
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if ip := net.ParseIP(m.GetIpAddress()); ip == nil {
 		err := SessionValidationError{
 			field:  "IpAddress",
@@ -105,10 +93,10 @@ func (m *Session) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetAppId() <= 0 {
+	if utf8.RuneCountInString(m.GetDevice()) < 1 {
 		err := SessionValidationError{
-			field:  "AppId",
-			reason: "value must be greater than 0",
+			field:  "Device",
+			reason: "value length must be at least 1 runes",
 		}
 		if !all {
 			return err
@@ -181,35 +169,6 @@ func (m *Session) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return SessionValidationError{
 				field:  "LastActivity",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetExpiredAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SessionValidationError{
-					field:  "ExpiredAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SessionValidationError{
-					field:  "ExpiredAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetExpiredAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SessionValidationError{
-				field:  "ExpiredAt",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
