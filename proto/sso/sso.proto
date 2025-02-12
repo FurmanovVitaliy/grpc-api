@@ -218,6 +218,7 @@ message ActiveSessionsResponse {
 message RevokeSessionRequest {
     string session_id = 1 [(validate.rules).string = {min_len: 1}];
     string access_token = 2 [(validate.rules).string = {min_len: 1}];
+    int32 app_id = 3 [(validate.rules).int32 = {gt: 0}];
 }
 
 message RevokeSessionResponse {
@@ -228,6 +229,7 @@ message RevokeSessionResponse {
 message RevokeAppSessionsRequest {
     string access_token = 1 [(validate.rules).string = {min_len: 1}];
     int32 app_id = 2 [(validate.rules).int32 = {gt: 0}];
+    int32 goal_app_id = 3 [(validate.rules).int32 = {gt: 0}];
 
 }
 
@@ -238,6 +240,7 @@ message RevokeAppSessionsResponse {
 
 message RevokeAllSessionsRequest {
     string access_token = 1 [(validate.rules).string = {min_len: 1}];
+    int32 app_id = 2 [(validate.rules).int32 = {gt: 0}];
 }
 
 message RevokeAllSessionsResponse {

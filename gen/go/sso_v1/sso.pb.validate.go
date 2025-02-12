@@ -2410,6 +2410,17 @@ func (m *RevokeSessionRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetAppId() <= 0 {
+		err := RevokeSessionRequestValidationError{
+			field:  "AppId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return RevokeSessionRequestMultiError(errors)
 	}
@@ -2640,6 +2651,17 @@ func (m *RevokeAppSessionsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetGoalAppId() <= 0 {
+		err := RevokeAppSessionsRequestValidationError{
+			field:  "GoalAppId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return RevokeAppSessionsRequestMultiError(errors)
 	}
@@ -2852,6 +2874,17 @@ func (m *RevokeAllSessionsRequest) validate(all bool) error {
 		err := RevokeAllSessionsRequestValidationError{
 			field:  "AccessToken",
 			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetAppId() <= 0 {
+		err := RevokeAllSessionsRequestValidationError{
+			field:  "AppId",
+			reason: "value must be greater than 0",
 		}
 		if !all {
 			return err
