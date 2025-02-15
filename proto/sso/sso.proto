@@ -227,7 +227,7 @@ message RevokeSessionResponse {
 message RevokeAppSessionsRequest {
     string access_token = 1 [(validate.rules).string = {min_len: 1}];
     int32 app_id = 2 [(validate.rules).int32 = {gt: 0}];
-    int32 goal_app_id = 3 [(validate.rules).int32 = {gt: 0}];
+    int32 target_app_id = 3 [(validate.rules).int32 = {gt: 0}];
 
 }
 
@@ -248,8 +248,9 @@ message RevokeAllSessionsResponse {
 
 // Запросы и ответы для блокировки пользователей
 message BlockUserRequest {
-    string user_id = 1 [(validate.rules).string = {uuid: true}];
-    string access_token = 2 [(validate.rules).string = {min_len: 1}];
+    string email = 1 [(validate.rules).string = {email: true}];
+    string username = 2 [(validate.rules).string = {min_len: 3, max_len: 50, pattern: "^[a-zA-Z0-9_]+$"}];
+    string access_token = 3 [(validate.rules).string = {min_len: 1}];
 }
 
 message BlockUserResponse {
