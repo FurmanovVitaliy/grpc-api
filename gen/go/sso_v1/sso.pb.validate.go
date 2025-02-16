@@ -3071,32 +3071,21 @@ func (m *BlockUserRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 50 {
-		err := BlockUserRequestValidationError{
-			field:  "Username",
-			reason: "value length must be between 3 and 50 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if !_BlockUserRequest_Username_Pattern.MatchString(m.GetUsername()) {
-		err := BlockUserRequestValidationError{
-			field:  "Username",
-			reason: "value does not match regex pattern \"^[a-zA-Z0-9_]+$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetAccessToken()) < 1 {
 		err := BlockUserRequestValidationError{
 			field:  "AccessToken",
 			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetAppId() <= 0 {
+		err := BlockUserRequestValidationError{
+			field:  "AppId",
+			reason: "value must be greater than 0",
 		}
 		if !all {
 			return err
@@ -3231,8 +3220,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BlockUserRequestValidationError{}
-
-var _BlockUserRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9_]+$")
 
 // Validate checks the field values on BlockUserResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
