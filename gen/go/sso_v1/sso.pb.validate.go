@@ -1983,6 +1983,8 @@ func (m *OAuthCallbackResponse) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for ClientAddress
+
 	// no validation rules for Message
 
 	if len(errors) > 0 {
