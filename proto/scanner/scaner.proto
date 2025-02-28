@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package scanner;
+
+option go_package = "furmanov.scanner.v1.proto";
+
+import "validate/validate.proto";
+
+message Game {
+    string id = 1 [(validate.rules).string = {min_len: 1}];
+    string name = 2 [(validate.rules).string = {min_len: 1}];
+    string path = 3 [(validate.rules).string = {min_len: 1}];
+    string url = 4 [(validate.rules).string = {min_len: 1}];
+    string poster = 5 [(validate.rules).string = {min_len: 1}];
+    string platform = 6 [(validate.rules).string = {min_len: 1}];
+    float rating = 7;   
+    string summary = 8 [(validate.rules).string = {min_len: 1}];
+    repeated string trailers = 9 [(validate.rules).repeated.items.string.min_len = 1];
+    repeated string screenshots = 10 [(validate.rules).repeated.items.string.min_len = 1];
+    repeated string genres = 11 [(validate.rules).repeated.items.string.min_len = 1];
+    int32 release_date = 12; 
+    string age_rating = 13 [(validate.rules).string = {min_len: 1}];
+    string publisher = 14 [(validate.rules).string = {min_len: 1}];
+    string developer = 15 [(validate.rules).string = {min_len: 1}];
+}
+
+service Scanner {
+    rpc Games(GamesRequest) returns (GamesResponse) {}
+    rpc LibraryChanged (LibraryChangedRequest) returns (LibraryChangedResponse) {}
+}
+
+message GamesRequest {
+    option (validate.disabled) = true;
+}
+
+message GamesResponse {
+    repeated Game games = 1 [(validate.rules).repeated .min_items = 1];
+}
+
+message LibraryChangedRequest {
+    string hash = 1 [(validate.rules).string = {min_len: 1}];
+}
+
+message LibraryChangedResponse {
+    bool change = 1;
+}
