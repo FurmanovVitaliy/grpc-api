@@ -446,6 +446,17 @@ func (m *GamesResponse) validate(all bool) error {
 
 	}
 
+	if utf8.RuneCountInString(m.GetHash()) < 1 {
+		err := GamesResponseValidationError{
+			field:  "Hash",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return GamesResponseMultiError(errors)
 	}
