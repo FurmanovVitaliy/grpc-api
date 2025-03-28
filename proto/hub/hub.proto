@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package hub;
+
+option go_package = "furmanov.hub.v1.proto";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+
+// 🔹 Public API service for clients and other services
+service Game{
+    // Fetch the list of available games
+    rpc GamesLibrary(GamesLibraryRequest) returns (GamesLibraryResponse) {
+        option (google.api.http) = {
+            get: "/games"
+        };
+    }
+
+    // Retrieve detailed information about a specific game
+    rpc Game(GameInfoRequest) returns (GameInfoResponse) {
+        option (google.api.http) = {
+            get: "/games/{id}"
+        };
+    }
+}
+service Signaling{
+    // Bind a player to a session
+    rpc BindPlayer(BindPlayerRequest) returns (BindPlayerResponse) {
+        option (google.api.http) = {
+            post: "/bind-player"
+            body: "*"
+        };
+    }
+}
+
+// 🔹 Internal service for communication between Hub and Stations
+service HubStation {
+    // Bi-directional streaming for data exchange between Hub and Stations
+    rpc ExchangeStream(stream ExchangeMessage) returns (stream ExchangeMessage);
+}
+
+// --- Messages for HubApi ---
+message GamesLibraryRequest {}
+
+message GamesLibraryResponse {
+    repeated GameInfo games = 1;
+}
+
+message GameInfoRequest {
+    string id = 1 [(validate.rules).string = {uuid: true}];
+}
+
+message GameInfoResponse {
+    GameInfo game = 1;
+}
+
+message BindPlayerRequest {
+    string username = 1 [(validate.rules).string = {min_len: 3, max_len: 50, pattern: "^[a-zA-Z0-9_]+$"}];
+    PlayerEnv player_env = 2;
+    string access_token = 3 [(validate.rules).string = {min_len: 1}];
+}
+
+message BindPlayerResponse {
+    bool success = 1;
+}
+// --- Common Structures ---
+enum Platform {
+    PLATFORM_WEB = 0;
+    PLATFORM_WINDOWS = 1;
+    PLATFORM_MAC = 2;
+    PLATFORM_LINUX = 3;
+    PLATFORM_IOS = 4;
+    PLATFORM_ANDROID = 5;
+}
+
+enum Input {
+    INPUT_GAMEPAD = 0;
+    INPUT_KEYBOARD = 1;
+    INPUT_TOUCH = 2;
+}
+
+// Represents detailed game information
+message GameInfo {
+    string id = 1 [(validate.rules).string = {uuid: true}];
+    string name = 2 [(validate.rules).string = {min_len: 1}];
+    string url = 3 [(validate.rules).string = {min_len: 1}];
+    string poster_url = 4 [(validate.rules).string = {min_len: 1}];
+    string platform = 5 [(validate.rules).string = {min_len: 1}];
+    float rating = 6;
+    string summary = 7 [(validate.rules).string = {min_len: 1}];
+    repeated string trailers = 8;
+    repeated string screenshots = 9;
+    repeated string genres = 10;
+    int32 release_date = 11 [(validate.rules).int32 = {gte: 0}];
+    string age_rating = 12 [(validate.rules).string = {min_len: 1}];
+    string publisher = 13 [(validate.rules).string = {min_len: 1}];
+    string developer = 14 [(validate.rules).string = {min_len: 1}];
+}
+
+// Represents the player's environment (hardware and platform details)
+message PlayerEnv {
+    Platform platform = 1;
+    int32 display_width = 2; 
+    int32 display_height = 3;
+    Input input_type = 4;
+    string input_vendor = 5;
+    string input_product = 6;
+}
+// --- Messages for HubStation --- 
+// Represents system resource usage statistics
+message SystemLoad {
+    float cpu = 1;
+    float memory = 2;
+    float gpu = 3;
+    float network = 4;
+    float player_slots = 5;
+}
+// Represents a list of station available games and their hash
+message GamesWithHash {
+    repeated GameInfo games = 1;
+    string games_hash = 2;
+}
+// Represents geographical data of a station
+message GeoData {
+    string country = 1;
+    string region = 2;
+    string city = 3;
+    float latitude = 4;
+    float longitude = 5;
+    string timezone = 6;
+}
+// Represents a gaming station
+message Station {
+    string id = 1;
+    string ip = 2;
+    int32 port = 3;
+    GeoData geo_data = 4;
+}
+// Represents a command message sent to a station
+message CommandMessage {
+    string task_id = 1;
+    string command = 2;
+    repeated string args = 3;
+}
+// Represents messages exchanged between Hub and Stations
+message ExchangeMessage {
+    string station_id = 1;
+    oneof payload {
+        Station connect = 2;             
+        GamesWithHash games = 3;        
+        SystemLoad load = 4;            
+        CommandMessage command = 5;      
+    }
+}

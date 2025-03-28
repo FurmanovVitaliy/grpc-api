@@ -50,75 +50,75 @@ service Auth {
 
     rpc Register(RegisterRequest) returns (RegisterResponse) {
         option (google.api.http) = {
-            post: "/api/auth/register"
+            post: "/auth/register"
             body: "*"
         };
     }
 
     rpc Login(LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
-            post: "/api/auth/login"
+            post: "/auth/login"
             body: "*"
         };
     }
 
     rpc Logout(LogoutRequest) returns (LogoutResponse) {
         option (google.api.http) = {
-            post: "/api/auth/logout"
+            post: "/auth/logout"
             body: "*"
         };
     }
 
     rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {
         option (google.api.http) = {
-            post: "/api/auth/refresh-token"
+            post: "/auth/refresh-token"
             body: "*"
         };
     }
 
     rpc OAuth(OAuthRequest) returns (OAuthResponse) {
         option (google.api.http) = {
-            post: "/api/auth/oauth"
+            post: "/auth/oauth"
             body: "*"
         };
     }
 
     rpc GithubCallback(OAuthCallbackRequest) returns (OAuthCallbackResponse) {
     option (google.api.http) = {
-        get: "/api/auth/github-callback"
+        get: "/auth/github-callback"
         };
     }
 
     rpc ActiveSessions(ActiveSessionsRequest) returns (ActiveSessionsResponse) {
         option (google.api.http) = {
-            get: "/api/auth/sessions"
+            get: "/auth/sessions"
         };
     }
 
     rpc RevokeSession(RevokeSessionRequest) returns (RevokeSessionResponse) {
         option (google.api.http) = {
-            post: "/api/auth/revoke-session"
+            post: "/auth/revoke-session"
             body: "*"
         };
     }
 
     rpc RevokeAppSessions(RevokeAppSessionsRequest) returns (RevokeAppSessionsResponse) {
         option (google.api.http) = {
-            post: "/api/auth/revoke-app-sessions"
+            post: "/auth/revoke-app-sessions"
             body: "*"
         };
     }
 
     rpc RevokeAllSessions(RevokeAllSessionsRequest) returns (RevokeAllSessionsResponse) {
         option (google.api.http) = {
-            post: "/api/auth/revoke-all-sessions"
+            post: "/auth/revoke-all-sessions"
             body: "*"
         };
     }
 
     rpc BlockUser(BlockUserRequest) returns (BlockUserResponse) {
         option (google.api.http) = {
-            post: "/api/auth/admin/block-user"
+            post: "/auth/admin/block-user"
             body: "*"
         };
     }
@@ -166,7 +166,6 @@ message LogoutResponse {
     string message = 2;
 }
 
-// Запросы и ответы для обновления токена
 message RefreshTokenRequest {
     string refresh_token = 1 [(validate.rules).string = {min_len: 1}];
 }
@@ -176,7 +175,6 @@ message RefreshTokenResponse {
     google.protobuf.Timestamp access_token_expires_at = 2;
 }
 
-// Запросы и ответы для OAuth
 message OAuthRequest {
     OAuthProvider provider = 1;
     int32 app_id = 2 [(validate.rules).int32 = {gt: 0}];
@@ -247,7 +245,6 @@ message RevokeAllSessionsResponse {
     string message = 2;
 }
 
-// Запросы и ответы для блокировки пользователей
 message BlockUserRequest {
     string email = 1 [(validate.rules).string = {email: true}];
     string access_token = 3 [(validate.rules).string = {min_len: 1}];

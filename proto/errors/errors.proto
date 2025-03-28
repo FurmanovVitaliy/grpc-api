@@ -1,0 +1,13 @@
+
+syntax = "proto3";
+
+package errors;
+
+option go_package = "furmanov.errors.v1.proto";
+
+message ErrorDetail {
+  string service = 1;
+  string code = 2;
+  string message = 3;
+  map<string, string> fields = 4;
+}
