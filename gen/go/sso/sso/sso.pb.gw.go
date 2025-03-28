@@ -31,7 +31,7 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_Auth_Register_0(ctx context.Context, marshaler runtime.Marshaler, client AuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Auth_RegisterUser_0(ctx context.Context, marshaler runtime.Marshaler, client AuthClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq RegisterRequest
 	var metadata runtime.ServerMetadata
 
@@ -43,12 +43,12 @@ func request_Auth_Register_0(ctx context.Context, marshaler runtime.Marshaler, c
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.Register(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.RegisterUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Auth_Register_0(ctx context.Context, marshaler runtime.Marshaler, server AuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Auth_RegisterUser_0(ctx context.Context, marshaler runtime.Marshaler, server AuthServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq RegisterRequest
 	var metadata runtime.ServerMetadata
 
@@ -60,7 +60,7 @@ func local_request_Auth_Register_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.Register(ctx, &protoReq)
+	msg, err := server.RegisterUser(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -415,7 +415,7 @@ func local_request_Auth_BlockUser_0(ctx context.Context, marshaler runtime.Marsh
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterAuthHandlerFromEndpoint instead.
 func RegisterAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, server AuthServer) error {
 
-	mux.Handle("POST", pattern_Auth_Register_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Auth_RegisterUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -423,12 +423,12 @@ func RegisterAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/auth.Auth/Register", runtime.WithHTTPPathPattern("/auth/register"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/auth.Auth/RegisterUser", runtime.WithHTTPPathPattern("/auth/register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Auth_Register_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Auth_RegisterUser_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -436,7 +436,7 @@ func RegisterAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 			return
 		}
 
-		forward_Auth_Register_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Auth_RegisterUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -731,25 +731,25 @@ func RegisterAuthHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.
 // "AuthClient" to call the correct interceptors.
 func RegisterAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, client AuthClient) error {
 
-	mux.Handle("POST", pattern_Auth_Register_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Auth_RegisterUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/auth.Auth/Register", runtime.WithHTTPPathPattern("/auth/register"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/auth.Auth/RegisterUser", runtime.WithHTTPPathPattern("/auth/register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Auth_Register_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Auth_RegisterUser_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Auth_Register_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Auth_RegisterUser_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -977,7 +977,7 @@ func RegisterAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 }
 
 var (
-	pattern_Auth_Register_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "register"}, ""))
+	pattern_Auth_RegisterUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "register"}, ""))
 
 	pattern_Auth_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "login"}, ""))
 
@@ -1001,7 +1001,7 @@ var (
 )
 
 var (
-	forward_Auth_Register_0 = runtime.ForwardResponseMessage
+	forward_Auth_RegisterUser_0 = runtime.ForwardResponseMessage
 
 	forward_Auth_Login_0 = runtime.ForwardResponseMessage
 

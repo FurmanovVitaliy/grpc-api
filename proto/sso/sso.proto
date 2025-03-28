@@ -48,7 +48,7 @@ message User {
 // Сервис аутентификации
 service Auth {
 
-    rpc Register(RegisterRequest) returns (RegisterResponse) {
+    rpc RegisterUser(RegisterRequest) returns (RegisterResponse) {
         option (google.api.http) = {
             post: "/auth/register"
             body: "*"
