@@ -38,6 +38,548 @@ var (
 // define the regex for a UUID once up-front
 var _hub_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
+// Validate checks the field values on SessionDescription with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SessionDescription) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SessionDescription with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SessionDescriptionMultiError, or nil if none found.
+func (m *SessionDescription) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SessionDescription) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Sdp
+
+	// no validation rules for Type
+
+	if len(errors) > 0 {
+		return SessionDescriptionMultiError(errors)
+	}
+
+	return nil
+}
+
+// SessionDescriptionMultiError is an error wrapping multiple validation errors
+// returned by SessionDescription.ValidateAll() if the designated constraints
+// aren't met.
+type SessionDescriptionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SessionDescriptionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SessionDescriptionMultiError) AllErrors() []error { return m }
+
+// SessionDescriptionValidationError is the validation error returned by
+// SessionDescription.Validate if the designated constraints aren't met.
+type SessionDescriptionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SessionDescriptionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SessionDescriptionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SessionDescriptionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SessionDescriptionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SessionDescriptionValidationError) ErrorName() string {
+	return "SessionDescriptionValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SessionDescriptionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSessionDescription.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SessionDescriptionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SessionDescriptionValidationError{}
+
+// Validate checks the field values on IceCandidate with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *IceCandidate) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IceCandidate with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in IceCandidateMultiError, or
+// nil if none found.
+func (m *IceCandidate) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IceCandidate) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Candidate
+
+	// no validation rules for SdpMid
+
+	// no validation rules for SdpMlineIndex
+
+	if len(errors) > 0 {
+		return IceCandidateMultiError(errors)
+	}
+
+	return nil
+}
+
+// IceCandidateMultiError is an error wrapping multiple validation errors
+// returned by IceCandidate.ValidateAll() if the designated constraints aren't met.
+type IceCandidateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IceCandidateMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IceCandidateMultiError) AllErrors() []error { return m }
+
+// IceCandidateValidationError is the validation error returned by
+// IceCandidate.Validate if the designated constraints aren't met.
+type IceCandidateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IceCandidateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IceCandidateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IceCandidateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IceCandidateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IceCandidateValidationError) ErrorName() string { return "IceCandidateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e IceCandidateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIceCandidate.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IceCandidateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IceCandidateValidationError{}
+
+// Validate checks the field values on GameInfo with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GameInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GameInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GameInfoMultiError, or nil
+// if none found.
+func (m *GameInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GameInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = GameInfoValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		err := GameInfoValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetUrl()) < 1 {
+		err := GameInfoValidationError{
+			field:  "Url",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPosterUrl()) < 1 {
+		err := GameInfoValidationError{
+			field:  "PosterUrl",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPlatform()) < 1 {
+		err := GameInfoValidationError{
+			field:  "Platform",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Rating
+
+	if utf8.RuneCountInString(m.GetSummary()) < 1 {
+		err := GameInfoValidationError{
+			field:  "Summary",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetReleaseDate() < 0 {
+		err := GameInfoValidationError{
+			field:  "ReleaseDate",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetAgeRating()) < 1 {
+		err := GameInfoValidationError{
+			field:  "AgeRating",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPublisher()) < 1 {
+		err := GameInfoValidationError{
+			field:  "Publisher",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetDeveloper()) < 1 {
+		err := GameInfoValidationError{
+			field:  "Developer",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GameInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *GameInfo) _validateUuid(uuid string) error {
+	if matched := _hub_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// GameInfoMultiError is an error wrapping multiple validation errors returned
+// by GameInfo.ValidateAll() if the designated constraints aren't met.
+type GameInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GameInfoMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GameInfoMultiError) AllErrors() []error { return m }
+
+// GameInfoValidationError is the validation error returned by
+// GameInfo.Validate if the designated constraints aren't met.
+type GameInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GameInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GameInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GameInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GameInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GameInfoValidationError) ErrorName() string { return "GameInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GameInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGameInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GameInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GameInfoValidationError{}
+
+// Validate checks the field values on PlayerEnv with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PlayerEnv) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PlayerEnv with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PlayerEnvMultiError, or nil
+// if none found.
+func (m *PlayerEnv) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PlayerEnv) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Platform
+
+	// no validation rules for DisplayWidth
+
+	// no validation rules for DisplayHeight
+
+	// no validation rules for InputType
+
+	// no validation rules for InputVendor
+
+	// no validation rules for InputProduct
+
+	if len(errors) > 0 {
+		return PlayerEnvMultiError(errors)
+	}
+
+	return nil
+}
+
+// PlayerEnvMultiError is an error wrapping multiple validation errors returned
+// by PlayerEnv.ValidateAll() if the designated constraints aren't met.
+type PlayerEnvMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PlayerEnvMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PlayerEnvMultiError) AllErrors() []error { return m }
+
+// PlayerEnvValidationError is the validation error returned by
+// PlayerEnv.Validate if the designated constraints aren't met.
+type PlayerEnvValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PlayerEnvValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PlayerEnvValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PlayerEnvValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PlayerEnvValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PlayerEnvValidationError) ErrorName() string { return "PlayerEnvValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PlayerEnvValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPlayerEnv.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PlayerEnvValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PlayerEnvValidationError{}
+
 // Validate checks the field values on GamesLibraryRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -795,162 +1337,145 @@ var _ interface {
 	ErrorName() string
 } = BindPlayerResponseValidationError{}
 
-// Validate checks the field values on GameInfo with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *GameInfo) Validate() error {
+// Validate checks the field values on WebRTCSignalingMessage with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *WebRTCSignalingMessage) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GameInfo with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in GameInfoMultiError, or nil
-// if none found.
-func (m *GameInfo) ValidateAll() error {
+// ValidateAll checks the field values on WebRTCSignalingMessage with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// WebRTCSignalingMessageMultiError, or nil if none found.
+func (m *WebRTCSignalingMessage) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GameInfo) validate(all bool) error {
+func (m *WebRTCSignalingMessage) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if err := m._validateUuid(m.GetId()); err != nil {
-		err = GameInfoValidationError{
-			field:  "Id",
-			reason: "value must be a valid UUID",
-			cause:  err,
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for SessionId
 
-	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := GameInfoValidationError{
-			field:  "Name",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Type
 
-	if utf8.RuneCountInString(m.GetUrl()) < 1 {
-		err := GameInfoValidationError{
-			field:  "Url",
-			reason: "value length must be at least 1 runes",
+	switch v := m.Payload.(type) {
+	case *WebRTCSignalingMessage_Description:
+		if v == nil {
+			err := WebRTCSignalingMessageValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
 
-	if utf8.RuneCountInString(m.GetPosterUrl()) < 1 {
-		err := GameInfoValidationError{
-			field:  "PosterUrl",
-			reason: "value length must be at least 1 runes",
+		if all {
+			switch v := interface{}(m.GetDescription()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WebRTCSignalingMessageValidationError{
+						field:  "Description",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WebRTCSignalingMessageValidationError{
+						field:  "Description",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDescription()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WebRTCSignalingMessageValidationError{
+					field:  "Description",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
 
-	if utf8.RuneCountInString(m.GetPlatform()) < 1 {
-		err := GameInfoValidationError{
-			field:  "Platform",
-			reason: "value length must be at least 1 runes",
+	case *WebRTCSignalingMessage_Candidate:
+		if v == nil {
+			err := WebRTCSignalingMessageValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
 
-	// no validation rules for Rating
+		if all {
+			switch v := interface{}(m.GetCandidate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WebRTCSignalingMessageValidationError{
+						field:  "Candidate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WebRTCSignalingMessageValidationError{
+						field:  "Candidate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCandidate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WebRTCSignalingMessageValidationError{
+					field:  "Candidate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
 
-	if utf8.RuneCountInString(m.GetSummary()) < 1 {
-		err := GameInfoValidationError{
-			field:  "Summary",
-			reason: "value length must be at least 1 runes",
+	case *WebRTCSignalingMessage_Error:
+		if v == nil {
+			err := WebRTCSignalingMessageValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetReleaseDate() < 0 {
-		err := GameInfoValidationError{
-			field:  "ReleaseDate",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetAgeRating()) < 1 {
-		err := GameInfoValidationError{
-			field:  "AgeRating",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetPublisher()) < 1 {
-		err := GameInfoValidationError{
-			field:  "Publisher",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetDeveloper()) < 1 {
-		err := GameInfoValidationError{
-			field:  "Developer",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+		// no validation rules for Error
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
-		return GameInfoMultiError(errors)
+		return WebRTCSignalingMessageMultiError(errors)
 	}
 
 	return nil
 }
 
-func (m *GameInfo) _validateUuid(uuid string) error {
-	if matched := _hub_uuidPattern.MatchString(uuid); !matched {
-		return errors.New("invalid uuid format")
-	}
-
-	return nil
-}
-
-// GameInfoMultiError is an error wrapping multiple validation errors returned
-// by GameInfo.ValidateAll() if the designated constraints aren't met.
-type GameInfoMultiError []error
+// WebRTCSignalingMessageMultiError is an error wrapping multiple validation
+// errors returned by WebRTCSignalingMessage.ValidateAll() if the designated
+// constraints aren't met.
+type WebRTCSignalingMessageMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GameInfoMultiError) Error() string {
+func (m WebRTCSignalingMessageMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -959,11 +1484,11 @@ func (m GameInfoMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GameInfoMultiError) AllErrors() []error { return m }
+func (m WebRTCSignalingMessageMultiError) AllErrors() []error { return m }
 
-// GameInfoValidationError is the validation error returned by
-// GameInfo.Validate if the designated constraints aren't met.
-type GameInfoValidationError struct {
+// WebRTCSignalingMessageValidationError is the validation error returned by
+// WebRTCSignalingMessage.Validate if the designated constraints aren't met.
+type WebRTCSignalingMessageValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -971,22 +1496,24 @@ type GameInfoValidationError struct {
 }
 
 // Field function returns field value.
-func (e GameInfoValidationError) Field() string { return e.field }
+func (e WebRTCSignalingMessageValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GameInfoValidationError) Reason() string { return e.reason }
+func (e WebRTCSignalingMessageValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GameInfoValidationError) Cause() error { return e.cause }
+func (e WebRTCSignalingMessageValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GameInfoValidationError) Key() bool { return e.key }
+func (e WebRTCSignalingMessageValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GameInfoValidationError) ErrorName() string { return "GameInfoValidationError" }
+func (e WebRTCSignalingMessageValidationError) ErrorName() string {
+	return "WebRTCSignalingMessageValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e GameInfoValidationError) Error() string {
+func (e WebRTCSignalingMessageValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -998,14 +1525,14 @@ func (e GameInfoValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGameInfo.%s: %s%s",
+		"invalid %sWebRTCSignalingMessage.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GameInfoValidationError{}
+var _ error = WebRTCSignalingMessageValidationError{}
 
 var _ interface {
 	Field() string
@@ -1013,118 +1540,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GameInfoValidationError{}
-
-// Validate checks the field values on PlayerEnv with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *PlayerEnv) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on PlayerEnv with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in PlayerEnvMultiError, or nil
-// if none found.
-func (m *PlayerEnv) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *PlayerEnv) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Platform
-
-	// no validation rules for DisplayWidth
-
-	// no validation rules for DisplayHeight
-
-	// no validation rules for InputType
-
-	// no validation rules for InputVendor
-
-	// no validation rules for InputProduct
-
-	if len(errors) > 0 {
-		return PlayerEnvMultiError(errors)
-	}
-
-	return nil
-}
-
-// PlayerEnvMultiError is an error wrapping multiple validation errors returned
-// by PlayerEnv.ValidateAll() if the designated constraints aren't met.
-type PlayerEnvMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m PlayerEnvMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m PlayerEnvMultiError) AllErrors() []error { return m }
-
-// PlayerEnvValidationError is the validation error returned by
-// PlayerEnv.Validate if the designated constraints aren't met.
-type PlayerEnvValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e PlayerEnvValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e PlayerEnvValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e PlayerEnvValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e PlayerEnvValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e PlayerEnvValidationError) ErrorName() string { return "PlayerEnvValidationError" }
-
-// Error satisfies the builtin error interface
-func (e PlayerEnvValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sPlayerEnv.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = PlayerEnvValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = PlayerEnvValidationError{}
+} = WebRTCSignalingMessageValidationError{}
 
 // Validate checks the field values on SystemLoad with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

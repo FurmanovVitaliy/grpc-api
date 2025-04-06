@@ -32,6 +32,9 @@ service Signaling{
             body: "*"
         };
     }
+    // Establish a WebRTC signaling connection
+    // This is a bi-directional streaming RPC for real-time communication
+    rpc WebRTCSignaling(stream WebRTCSignalingMessage) returns (stream WebRTCSignalingMessage); 
 }
 
 // 🔹 Internal service for communication between Hub and Stations
@@ -40,30 +43,6 @@ service HubStation {
     rpc ExchangeStream(stream ExchangeMessage) returns (stream ExchangeMessage);
 }
 
-// --- Messages for HubApi ---
-message GamesLibraryRequest {}
-
-message GamesLibraryResponse {
-    repeated GameInfo games = 1;
-}
-
-message GameInfoRequest {
-    string id = 1 [(validate.rules).string = {uuid: true}];
-}
-
-message GameInfoResponse {
-    GameInfo game = 1;
-}
-
-message BindPlayerRequest {
-    string username = 1 [(validate.rules).string = {min_len: 3, max_len: 50, pattern: "^[a-zA-Z0-9_]+$"}];
-    PlayerEnv player_env = 2;
-    string access_token = 3 [(validate.rules).string = {min_len: 1}];
-}
-
-message BindPlayerResponse {
-    bool success = 1;
-}
 // --- Common Structures ---
 enum Platform {
     PLATFORM_WEB = 0;
@@ -80,6 +59,24 @@ enum Input {
     INPUT_TOUCH = 2;
 }
 
+enum WebRTCMessageType {
+    MESSAGE_TYPE_OFFER = 0;
+    MESSAGE_TYPE_ANSWER = 1;
+    MESSAGE_TYPE_CANDIDATE = 2;
+    MESSAGE_TYPE_CLOSE = 3;
+    MESSAGE_TYPE_ERROR = 4;
+}
+
+message SessionDescription {
+    string sdp = 1;
+    string type = 2; // "offer" or "answer"
+}
+
+message IceCandidate {
+    string candidate = 1;
+    string sdp_mid = 2;
+    int32 sdp_mline_index = 3;
+}
 // Represents detailed game information
 message GameInfo {
     string id = 1 [(validate.rules).string = {uuid: true}];
@@ -107,7 +104,44 @@ message PlayerEnv {
     string input_vendor = 5;
     string input_product = 6;
 }
-// --- Messages for HubStation --- 
+//--- Messages for Game Service ---
+message GamesLibraryRequest {}
+
+message GamesLibraryResponse {
+    repeated GameInfo games = 1;
+}
+
+message GameInfoRequest {
+    string id = 1 [(validate.rules).string = {uuid: true}];
+}
+
+message GameInfoResponse {
+    GameInfo game = 1;
+}
+
+// --- Messages for Signaling Service ---
+message BindPlayerRequest {
+    string username = 1 [(validate.rules).string = {min_len: 3, max_len: 50, pattern: "^[a-zA-Z0-9_]+$"}];
+    PlayerEnv player_env = 2;
+    string access_token = 3 [(validate.rules).string = {min_len: 1}];
+}
+
+message BindPlayerResponse {
+    bool success = 1;
+}
+
+message WebRTCSignalingMessage {
+    string session_id = 1;
+    WebRTCMessageType type = 2;
+
+    oneof payload {
+        SessionDescription description = 3;
+        IceCandidate candidate = 4;
+        string error = 5;
+    }
+}
+
+// --- Messages for HubStation Service --- 
 // Represents system resource usage statistics
 message SystemLoad {
     float cpu = 1;

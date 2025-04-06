@@ -150,6 +150,9 @@ var Game_ServiceDesc = grpc.ServiceDesc{
 type SignalingClient interface {
 	// Bind a player to a session
 	BindPlayer(ctx context.Context, in *BindPlayerRequest, opts ...grpc.CallOption) (*BindPlayerResponse, error)
+	// Establish a WebRTC signaling connection
+	// This is a bi-directional streaming RPC for real-time communication
+	WebRTCSignaling(ctx context.Context, opts ...grpc.CallOption) (Signaling_WebRTCSignalingClient, error)
 }
 
 type signalingClient struct {
@@ -169,12 +172,46 @@ func (c *signalingClient) BindPlayer(ctx context.Context, in *BindPlayerRequest,
 	return out, nil
 }
 
+func (c *signalingClient) WebRTCSignaling(ctx context.Context, opts ...grpc.CallOption) (Signaling_WebRTCSignalingClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Signaling_ServiceDesc.Streams[0], "/hub.Signaling/WebRTCSignaling", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &signalingWebRTCSignalingClient{stream}
+	return x, nil
+}
+
+type Signaling_WebRTCSignalingClient interface {
+	Send(*WebRTCSignalingMessage) error
+	Recv() (*WebRTCSignalingMessage, error)
+	grpc.ClientStream
+}
+
+type signalingWebRTCSignalingClient struct {
+	grpc.ClientStream
+}
+
+func (x *signalingWebRTCSignalingClient) Send(m *WebRTCSignalingMessage) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *signalingWebRTCSignalingClient) Recv() (*WebRTCSignalingMessage, error) {
+	m := new(WebRTCSignalingMessage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SignalingServer is the server API for Signaling service.
 // All implementations must embed UnimplementedSignalingServer
 // for forward compatibility
 type SignalingServer interface {
 	// Bind a player to a session
 	BindPlayer(context.Context, *BindPlayerRequest) (*BindPlayerResponse, error)
+	// Establish a WebRTC signaling connection
+	// This is a bi-directional streaming RPC for real-time communication
+	WebRTCSignaling(Signaling_WebRTCSignalingServer) error
 	mustEmbedUnimplementedSignalingServer()
 }
 
@@ -184,6 +221,9 @@ type UnimplementedSignalingServer struct {
 
 func (UnimplementedSignalingServer) BindPlayer(context.Context, *BindPlayerRequest) (*BindPlayerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BindPlayer not implemented")
+}
+func (UnimplementedSignalingServer) WebRTCSignaling(Signaling_WebRTCSignalingServer) error {
+	return status.Errorf(codes.Unimplemented, "method WebRTCSignaling not implemented")
 }
 func (UnimplementedSignalingServer) mustEmbedUnimplementedSignalingServer() {}
 
@@ -216,6 +256,32 @@ func _Signaling_BindPlayer_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Signaling_WebRTCSignaling_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SignalingServer).WebRTCSignaling(&signalingWebRTCSignalingServer{stream})
+}
+
+type Signaling_WebRTCSignalingServer interface {
+	Send(*WebRTCSignalingMessage) error
+	Recv() (*WebRTCSignalingMessage, error)
+	grpc.ServerStream
+}
+
+type signalingWebRTCSignalingServer struct {
+	grpc.ServerStream
+}
+
+func (x *signalingWebRTCSignalingServer) Send(m *WebRTCSignalingMessage) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *signalingWebRTCSignalingServer) Recv() (*WebRTCSignalingMessage, error) {
+	m := new(WebRTCSignalingMessage)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // Signaling_ServiceDesc is the grpc.ServiceDesc for Signaling service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,7 +294,14 @@ var Signaling_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Signaling_BindPlayer_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "WebRTCSignaling",
+			Handler:       _Signaling_WebRTCSignaling_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "hub/hub.proto",
 }
 
