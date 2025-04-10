@@ -176,8 +176,38 @@ message Station {
 // Represents a command message sent to a station
 message CommandMessage {
     string task_id = 1;
-    string command = 2;
-    repeated string args = 3;
+    oneof command {
+        StartPlaySession start = 2;
+        StopPlaySession stop = 3;
+        ErrorMessage error = 4;
+    }
+}
+
+message StartPlaySession {
+    string game_id = 1 [(validate.rules).string = {uuid: true}];
+    string username = 2 [(validate.rules).string = {min_len: 3, max_len: 50, pattern: "^[a-zA-Z0-9_]+$"}];
+    PlayerEnv player_env = 3;
+}
+
+message StopPlaySession {
+    string session_id = 1;
+    string reason = 2;
+}
+message ErrorMessage {
+    string session_id = 1;
+    string error_message = 2;
+    string error_code = 3;
+    repeated string stack_trace = 4;
+    string timestamp = 5; 
+}
+// Represents a status message sent from a station
+message StatusMessage {
+    string session_id = 1;
+    oneof status {
+        string error = 2;
+        string success = 3; 
+        string info = 4;
+    }
 }
 // Represents messages exchanged between Hub and Stations
 message ExchangeMessage {
@@ -186,6 +216,7 @@ message ExchangeMessage {
         Station connect = 2;             
         GamesWithHash games = 3;        
         SystemLoad load = 4;            
-        CommandMessage command = 5;      
+        CommandMessage command = 5;   
+        StatusMessage status = 6;   
     }
 }

@@ -2054,7 +2054,133 @@ func (m *CommandMessage) validate(all bool) error {
 
 	// no validation rules for TaskId
 
-	// no validation rules for Command
+	switch v := m.Command.(type) {
+	case *CommandMessage_Start:
+		if v == nil {
+			err := CommandMessageValidationError{
+				field:  "Command",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetStart()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CommandMessageValidationError{
+						field:  "Start",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CommandMessageValidationError{
+						field:  "Start",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetStart()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CommandMessageValidationError{
+					field:  "Start",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *CommandMessage_Stop:
+		if v == nil {
+			err := CommandMessageValidationError{
+				field:  "Command",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetStop()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CommandMessageValidationError{
+						field:  "Stop",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CommandMessageValidationError{
+						field:  "Stop",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetStop()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CommandMessageValidationError{
+					field:  "Stop",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *CommandMessage_Error:
+		if v == nil {
+			err := CommandMessageValidationError{
+				field:  "Command",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetError()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CommandMessageValidationError{
+						field:  "Error",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CommandMessageValidationError{
+						field:  "Error",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetError()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CommandMessageValidationError{
+					field:  "Error",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
 
 	if len(errors) > 0 {
 		return CommandMessageMultiError(errors)
@@ -2133,6 +2259,533 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CommandMessageValidationError{}
+
+// Validate checks the field values on StartPlaySession with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *StartPlaySession) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StartPlaySession with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// StartPlaySessionMultiError, or nil if none found.
+func (m *StartPlaySession) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StartPlaySession) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateUuid(m.GetGameId()); err != nil {
+		err = StartPlaySessionValidationError{
+			field:  "GameId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 50 {
+		err := StartPlaySessionValidationError{
+			field:  "Username",
+			reason: "value length must be between 3 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_StartPlaySession_Username_Pattern.MatchString(m.GetUsername()) {
+		err := StartPlaySessionValidationError{
+			field:  "Username",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9_]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPlayerEnv()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, StartPlaySessionValidationError{
+					field:  "PlayerEnv",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, StartPlaySessionValidationError{
+					field:  "PlayerEnv",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPlayerEnv()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return StartPlaySessionValidationError{
+				field:  "PlayerEnv",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return StartPlaySessionMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *StartPlaySession) _validateUuid(uuid string) error {
+	if matched := _hub_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
+	}
+
+	return nil
+}
+
+// StartPlaySessionMultiError is an error wrapping multiple validation errors
+// returned by StartPlaySession.ValidateAll() if the designated constraints
+// aren't met.
+type StartPlaySessionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StartPlaySessionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StartPlaySessionMultiError) AllErrors() []error { return m }
+
+// StartPlaySessionValidationError is the validation error returned by
+// StartPlaySession.Validate if the designated constraints aren't met.
+type StartPlaySessionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StartPlaySessionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StartPlaySessionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StartPlaySessionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StartPlaySessionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StartPlaySessionValidationError) ErrorName() string { return "StartPlaySessionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StartPlaySessionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStartPlaySession.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StartPlaySessionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StartPlaySessionValidationError{}
+
+var _StartPlaySession_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9_]+$")
+
+// Validate checks the field values on StopPlaySession with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *StopPlaySession) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StopPlaySession with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// StopPlaySessionMultiError, or nil if none found.
+func (m *StopPlaySession) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StopPlaySession) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SessionId
+
+	// no validation rules for Reason
+
+	if len(errors) > 0 {
+		return StopPlaySessionMultiError(errors)
+	}
+
+	return nil
+}
+
+// StopPlaySessionMultiError is an error wrapping multiple validation errors
+// returned by StopPlaySession.ValidateAll() if the designated constraints
+// aren't met.
+type StopPlaySessionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StopPlaySessionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StopPlaySessionMultiError) AllErrors() []error { return m }
+
+// StopPlaySessionValidationError is the validation error returned by
+// StopPlaySession.Validate if the designated constraints aren't met.
+type StopPlaySessionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StopPlaySessionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StopPlaySessionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StopPlaySessionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StopPlaySessionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StopPlaySessionValidationError) ErrorName() string { return "StopPlaySessionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StopPlaySessionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStopPlaySession.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StopPlaySessionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StopPlaySessionValidationError{}
+
+// Validate checks the field values on ErrorMessage with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ErrorMessage) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ErrorMessage with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ErrorMessageMultiError, or
+// nil if none found.
+func (m *ErrorMessage) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ErrorMessage) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SessionId
+
+	// no validation rules for ErrorMessage
+
+	// no validation rules for ErrorCode
+
+	// no validation rules for Timestamp
+
+	if len(errors) > 0 {
+		return ErrorMessageMultiError(errors)
+	}
+
+	return nil
+}
+
+// ErrorMessageMultiError is an error wrapping multiple validation errors
+// returned by ErrorMessage.ValidateAll() if the designated constraints aren't met.
+type ErrorMessageMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ErrorMessageMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ErrorMessageMultiError) AllErrors() []error { return m }
+
+// ErrorMessageValidationError is the validation error returned by
+// ErrorMessage.Validate if the designated constraints aren't met.
+type ErrorMessageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ErrorMessageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ErrorMessageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ErrorMessageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ErrorMessageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ErrorMessageValidationError) ErrorName() string { return "ErrorMessageValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ErrorMessageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sErrorMessage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ErrorMessageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ErrorMessageValidationError{}
+
+// Validate checks the field values on StatusMessage with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StatusMessage) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StatusMessage with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StatusMessageMultiError, or
+// nil if none found.
+func (m *StatusMessage) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StatusMessage) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SessionId
+
+	switch v := m.Status.(type) {
+	case *StatusMessage_Error:
+		if v == nil {
+			err := StatusMessageValidationError{
+				field:  "Status",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Error
+	case *StatusMessage_Success:
+		if v == nil {
+			err := StatusMessageValidationError{
+				field:  "Status",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Success
+	case *StatusMessage_Info:
+		if v == nil {
+			err := StatusMessageValidationError{
+				field:  "Status",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Info
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return StatusMessageMultiError(errors)
+	}
+
+	return nil
+}
+
+// StatusMessageMultiError is an error wrapping multiple validation errors
+// returned by StatusMessage.ValidateAll() if the designated constraints
+// aren't met.
+type StatusMessageMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StatusMessageMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StatusMessageMultiError) AllErrors() []error { return m }
+
+// StatusMessageValidationError is the validation error returned by
+// StatusMessage.Validate if the designated constraints aren't met.
+type StatusMessageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StatusMessageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StatusMessageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StatusMessageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StatusMessageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StatusMessageValidationError) ErrorName() string { return "StatusMessageValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StatusMessageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStatusMessage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StatusMessageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StatusMessageValidationError{}
 
 // Validate checks the field values on ExchangeMessage with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -2317,6 +2970,47 @@ func (m *ExchangeMessage) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return ExchangeMessageValidationError{
 					field:  "Command",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExchangeMessage_Status:
+		if v == nil {
+			err := ExchangeMessageValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetStatus()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExchangeMessageValidationError{
+						field:  "Status",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExchangeMessageValidationError{
+						field:  "Status",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetStatus()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExchangeMessageValidationError{
+					field:  "Status",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
