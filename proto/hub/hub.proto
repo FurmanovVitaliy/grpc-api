@@ -41,6 +41,8 @@ service Signaling{
 service HubStation {
     // Bi-directional streaming for data exchange between Hub and Stations
     rpc ExchangeStream(stream ExchangeMessage) returns (stream ExchangeMessage);
+    
+    rpc WebRTCSignaling(stream WebRTCSignalingMessage) returns (stream WebRTCSignalingMessage); 
 }
 
 // --- Common Structures ---

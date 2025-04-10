@@ -311,6 +311,7 @@ var Signaling_ServiceDesc = grpc.ServiceDesc{
 type HubStationClient interface {
 	// Bi-directional streaming for data exchange between Hub and Stations
 	ExchangeStream(ctx context.Context, opts ...grpc.CallOption) (HubStation_ExchangeStreamClient, error)
+	WebRTCSignaling(ctx context.Context, opts ...grpc.CallOption) (HubStation_WebRTCSignalingClient, error)
 }
 
 type hubStationClient struct {
@@ -352,12 +353,44 @@ func (x *hubStationExchangeStreamClient) Recv() (*ExchangeMessage, error) {
 	return m, nil
 }
 
+func (c *hubStationClient) WebRTCSignaling(ctx context.Context, opts ...grpc.CallOption) (HubStation_WebRTCSignalingClient, error) {
+	stream, err := c.cc.NewStream(ctx, &HubStation_ServiceDesc.Streams[1], "/hub.HubStation/WebRTCSignaling", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &hubStationWebRTCSignalingClient{stream}
+	return x, nil
+}
+
+type HubStation_WebRTCSignalingClient interface {
+	Send(*WebRTCSignalingMessage) error
+	Recv() (*WebRTCSignalingMessage, error)
+	grpc.ClientStream
+}
+
+type hubStationWebRTCSignalingClient struct {
+	grpc.ClientStream
+}
+
+func (x *hubStationWebRTCSignalingClient) Send(m *WebRTCSignalingMessage) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *hubStationWebRTCSignalingClient) Recv() (*WebRTCSignalingMessage, error) {
+	m := new(WebRTCSignalingMessage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // HubStationServer is the server API for HubStation service.
 // All implementations must embed UnimplementedHubStationServer
 // for forward compatibility
 type HubStationServer interface {
 	// Bi-directional streaming for data exchange between Hub and Stations
 	ExchangeStream(HubStation_ExchangeStreamServer) error
+	WebRTCSignaling(HubStation_WebRTCSignalingServer) error
 	mustEmbedUnimplementedHubStationServer()
 }
 
@@ -367,6 +400,9 @@ type UnimplementedHubStationServer struct {
 
 func (UnimplementedHubStationServer) ExchangeStream(HubStation_ExchangeStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method ExchangeStream not implemented")
+}
+func (UnimplementedHubStationServer) WebRTCSignaling(HubStation_WebRTCSignalingServer) error {
+	return status.Errorf(codes.Unimplemented, "method WebRTCSignaling not implemented")
 }
 func (UnimplementedHubStationServer) mustEmbedUnimplementedHubStationServer() {}
 
@@ -407,6 +443,32 @@ func (x *hubStationExchangeStreamServer) Recv() (*ExchangeMessage, error) {
 	return m, nil
 }
 
+func _HubStation_WebRTCSignaling_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(HubStationServer).WebRTCSignaling(&hubStationWebRTCSignalingServer{stream})
+}
+
+type HubStation_WebRTCSignalingServer interface {
+	Send(*WebRTCSignalingMessage) error
+	Recv() (*WebRTCSignalingMessage, error)
+	grpc.ServerStream
+}
+
+type hubStationWebRTCSignalingServer struct {
+	grpc.ServerStream
+}
+
+func (x *hubStationWebRTCSignalingServer) Send(m *WebRTCSignalingMessage) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *hubStationWebRTCSignalingServer) Recv() (*WebRTCSignalingMessage, error) {
+	m := new(WebRTCSignalingMessage)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // HubStation_ServiceDesc is the grpc.ServiceDesc for HubStation service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -418,6 +480,12 @@ var HubStation_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ExchangeStream",
 			Handler:       _HubStation_ExchangeStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "WebRTCSignaling",
+			Handler:       _HubStation_WebRTCSignaling_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
