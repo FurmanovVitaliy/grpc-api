@@ -25,7 +25,6 @@ service Game{
     }
 }
 service Signaling{
-    // Bind a player to a session
     rpc BindPlayer(BindPlayerRequest) returns (BindPlayerResponse) {
         option (google.api.http) = {
             post: "/bind-player"
