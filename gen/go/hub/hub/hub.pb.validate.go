@@ -1151,8 +1151,28 @@ func (m *BindPlayerRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if err := m._validateUuid(m.GetGameId()); err != nil {
+		err = BindPlayerRequestValidationError{
+			field:  "GameId",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return BindPlayerRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *BindPlayerRequest) _validateUuid(uuid string) error {
+	if matched := _hub_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -1256,6 +1276,8 @@ func (m *BindPlayerResponse) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Success
+
+	// no validation rules for SessionId
 
 	if len(errors) > 0 {
 		return BindPlayerResponseMultiError(errors)

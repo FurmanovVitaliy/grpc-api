@@ -126,10 +126,12 @@ message BindPlayerRequest {
     string username = 1 [(validate.rules).string = {min_len: 3, max_len: 50, pattern: "^[a-zA-Z0-9_]+$"}];
     PlayerEnv player_env = 2;
     string access_token = 3 [(validate.rules).string = {min_len: 1}];
+    string game_id = 4 [(validate.rules).string = {uuid: true}];
 }
 
 message BindPlayerResponse {
     bool success = 1;
+    string session_id = 2;
 }
 
 message WebRTCSignalingMessage {
